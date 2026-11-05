@@ -1,0 +1,15 @@
+{
+  "columns": 71,
+  "phi_precision": 1.0,
+  "phi_recall": 1.0,
+  "three_class_accuracy": 1.0,
+  "false_positives": [],
+  "false_negatives": [],
+  "wrong_tier": [],
+  "phi_columns_exposed_in_views": [],
+  "mode": "normal",
+  "columns_sent_to_review": 2,
+  "classifier": "offline-rules",
+  "detector": "local-regex",
+  "measured_at": "2026-11-04T17:13:38+00:00"
+}

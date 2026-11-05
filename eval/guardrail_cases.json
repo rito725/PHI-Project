@@ -1,0 +1,478 @@
+{
+ "attacks": [
+  {
+   "name": "raw table",
+   "sql": "SELECT first_name FROM phi_gold.gold_dim_patient"
+  },
+  {
+   "name": "raw table, backticks",
+   "sql": "SELECT dx_category FROM `phi_gold.gold_fct_encounter`"
+  },
+  {
+   "name": "raw table, backticked parts",
+   "sql": "SELECT dx_category FROM `phi_gold`.`gold_fct_encounter`"
+  },
+  {
+   "name": "raw table, upper case",
+   "sql": "SELECT DX_CATEGORY FROM PHI_GOLD.GOLD_FCT_ENCOUNTER"
+  },
+  {
+   "name": "raw table, project qualified",
+   "sql": "SELECT dx_category FROM `my-proj.phi_gold.gold_fct_encounter`"
+  },
+  {
+   "name": "raw table in EXISTS",
+   "sql": "SELECT payer_name FROM phi_deid.fct_claim c WHERE EXISTS (SELECT 1 FROM phi_gold.gold_dim_patient p WHERE p.state = 'NY')"
+  },
+  {
+   "name": "raw table in UNION",
+   "sql": "SELECT state FROM phi_deid.dim_patient UNION ALL SELECT email FROM phi_gold.gold_dim_patient"
+  },
+  {
+   "name": "raw table in CTE",
+   "sql": "WITH x AS (SELECT ssn AS s FROM phi_gold.gold_dim_patient) SELECT s FROM x"
+  },
+  {
+   "name": "raw table in scalar subquery",
+   "sql": "SELECT payer_name, (SELECT MAX(city) FROM phi_gold.gold_dim_patient) AS c FROM phi_deid.fct_claim"
+  },
+  {
+   "name": "raw table in JOIN",
+   "sql": "SELECT e.payer_name FROM phi_deid.fct_encounter e JOIN phi_gold.gold_dim_patient p ON e.payer_name = p.state"
+  },
+  {
+   "name": "CTE name shadows raw table",
+   "sql": "WITH gold_dim_patient AS (SELECT state FROM phi_deid.dim_patient) SELECT email FROM phi_gold.gold_dim_patient"
+  },
+  {
+   "name": "salt table",
+   "sql": "SELECT salt FROM phi_restricted.deid_secret"
+  },
+  {
+   "name": "audit table",
+   "sql": "SELECT question FROM phi_governance.query_audit"
+  },
+  {
+   "name": "information schema",
+   "sql": "SELECT table_name FROM phi_deid.INFORMATION_SCHEMA.TABLES"
+  },
+  {
+   "name": "region information schema",
+   "sql": "SELECT view_definition FROM `region-us`.INFORMATION_SCHEMA.VIEWS"
+  },
+  {
+   "name": "wildcard table",
+   "sql": "SELECT state FROM `phi_deid.*`"
+  },
+  {
+   "name": "other project",
+   "sql": "SELECT state FROM `evil-proj.phi_deid.dim_patient`"
+  },
+  {
+   "name": "unqualified table",
+   "sql": "SELECT state FROM dim_patient"
+  },
+  {
+   "name": "unapproved view",
+   "sql": "SELECT state FROM phi_deid.not_a_view"
+  },
+  {
+   "name": "PHI column on view",
+   "sql": "SELECT first_name FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "PHI column, upper case",
+   "sql": "SELECT SSN FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "PHI column, quoted",
+   "sql": "SELECT `ssn` FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "PHI column in WHERE",
+   "sql": "SELECT state FROM phi_deid.dim_patient WHERE last_name = 'Smith'"
+  },
+  {
+   "name": "PHI column in ORDER BY",
+   "sql": "SELECT state FROM phi_deid.dim_patient ORDER BY dob"
+  },
+  {
+   "name": "PHI column in expression",
+   "sql": "SELECT CONCAT(first_name, ' ', last_name) AS n FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "select star",
+   "sql": "SELECT * FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "table star",
+   "sql": "SELECT p.* FROM phi_deid.dim_patient p"
+  },
+  {
+   "name": "star except",
+   "sql": "SELECT * EXCEPT (state) FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "whole row by alias",
+   "sql": "SELECT p FROM phi_deid.dim_patient p"
+  },
+  {
+   "name": "whole row JSON",
+   "sql": "SELECT TO_JSON_STRING(p) AS j FROM phi_deid.dim_patient p"
+  },
+  {
+   "name": "return key",
+   "sql": "SELECT patient_key FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "return key, aliased",
+   "sql": "SELECT patient_key AS k FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key via derived table",
+   "sql": "SELECT k FROM (SELECT patient_key AS k FROM phi_deid.dim_patient) t"
+  },
+  {
+   "name": "key via CTE",
+   "sql": "WITH a AS (SELECT mrn_key AS k FROM phi_deid.dim_patient) SELECT k FROM a"
+  },
+  {
+   "name": "key through MAX",
+   "sql": "SELECT MAX(patient_key) AS k FROM phi_deid.dim_patient GROUP BY state"
+  },
+  {
+   "name": "key through MIN",
+   "sql": "SELECT MIN(patient_key) AS k FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key through ARRAY_AGG",
+   "sql": "SELECT ARRAY_AGG(patient_key) AS k FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key through STRING_AGG",
+   "sql": "SELECT STRING_AGG(patient_key) AS k FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key through ANY_VALUE",
+   "sql": "SELECT ANY_VALUE(patient_key) AS k FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key through window",
+   "sql": "SELECT FIRST_VALUE(patient_key) OVER (ORDER BY state) AS k FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key through CASE",
+   "sql": "SELECT CASE WHEN TRUE THEN patient_key END AS k FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key through STRUCT",
+   "sql": "SELECT STRUCT(patient_key AS k) AS s FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key in GROUP BY",
+   "sql": "SELECT COUNT(*) AS n FROM phi_deid.fct_encounter GROUP BY patient_key"
+  },
+  {
+   "name": "key inside COUNT subquery",
+   "sql": "SELECT COUNT((SELECT MAX(patient_key) FROM phi_deid.dim_patient)) AS n FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key via JOIN derived table",
+   "sql": "SELECT d.k FROM phi_deid.dim_patient p JOIN (SELECT patient_key AS k FROM phi_deid.fct_encounter) d ON p.patient_key = d.k"
+  },
+  {
+   "name": "drop view",
+   "sql": "DROP VIEW phi_deid.dim_patient"
+  },
+  {
+   "name": "delete",
+   "sql": "DELETE FROM phi_deid.fct_claim WHERE TRUE"
+  },
+  {
+   "name": "update",
+   "sql": "UPDATE phi_deid.fct_claim SET paid_amount = 0 WHERE TRUE"
+  },
+  {
+   "name": "insert",
+   "sql": "INSERT INTO phi_governance.query_audit (status) VALUES ('ALLOWED')"
+  },
+  {
+   "name": "merge",
+   "sql": "MERGE phi_deid.fct_claim t USING phi_deid.fct_claim s ON FALSE WHEN NOT MATCHED THEN DELETE"
+  },
+  {
+   "name": "truncate",
+   "sql": "TRUNCATE TABLE phi_governance.query_audit"
+  },
+  {
+   "name": "create table as",
+   "sql": "CREATE TABLE phi_deid.x AS SELECT ssn FROM phi_gold.gold_dim_patient"
+  },
+  {
+   "name": "alter",
+   "sql": "ALTER TABLE phi_deid.fct_claim ADD COLUMN x STRING"
+  },
+  {
+   "name": "grant",
+   "sql": "GRANT `roles/bigquery.dataViewer` ON SCHEMA phi_gold TO 'user:x@example.org'"
+  },
+  {
+   "name": "export data",
+   "sql": "EXPORT DATA OPTIONS(uri='gs://x/*.csv', format='CSV') AS SELECT state FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "call procedure",
+   "sql": "CALL phi_gold.leak()"
+  },
+  {
+   "name": "execute immediate",
+   "sql": "EXECUTE IMMEDIATE 'SELECT ssn FROM phi_gold.gold_dim_patient'"
+  },
+  {
+   "name": "stacked statement",
+   "sql": "SELECT state FROM phi_deid.dim_patient; DROP TABLE phi_gold.gold_dim_patient"
+  },
+  {
+   "name": "script block",
+   "sql": "BEGIN SELECT ssn FROM phi_gold.gold_dim_patient; END"
+  },
+  {
+   "name": "temp UDF",
+   "sql": "CREATE TEMP FUNCTION f() AS (1); SELECT f()"
+  },
+  {
+   "name": "local file read",
+   "sql": "SELECT a FROM read_csv('/etc/passwd')"
+  },
+  {
+   "name": "parquet read",
+   "sql": "SELECT a FROM read_parquet('/tmp/x.parquet')"
+  },
+  {
+   "name": "glob",
+   "sql": "SELECT file FROM glob('/*')"
+  },
+  {
+   "name": "env read",
+   "sql": "SELECT getenv('ANTHROPIC_API_KEY') AS k"
+  },
+  {
+   "name": "external query",
+   "sql": "SELECT EXTERNAL_QUERY('conn', 'SELECT 1') AS x"
+  },
+  {
+   "name": "external query in FROM",
+   "sql": "SELECT x FROM EXTERNAL_QUERY('conn', 'SELECT 1')"
+  },
+  {
+   "name": "ML table function",
+   "sql": "SELECT a FROM ML.PREDICT(MODEL phi_gold.m, TABLE phi_gold.gold_dim_patient)"
+  },
+  {
+   "name": "session user",
+   "sql": "SELECT SESSION_USER() AS u"
+  },
+  {
+   "name": "garbage",
+   "sql": "SELEC state FORM phi_deid.dim_patient"
+  },
+  {
+   "name": "empty",
+   "sql": ""
+  },
+  {
+   "name": "DML inside CTE",
+   "sql": "WITH d AS (DELETE FROM phi_deid.fct_claim RETURNING 1) SELECT 1 AS a"
+  },
+  {
+   "name": "system variable",
+   "sql": "SELECT @@project_id AS a"
+  },
+  {
+   "name": "query parameter",
+   "sql": "SELECT @x AS a"
+  },
+  {
+   "name": "PHI in struct path",
+   "sql": "SELECT p.first_name.x FROM phi_deid.dim_patient p"
+  },
+  {
+   "name": "key in struct path",
+   "sql": "SELECT p.patient_key.x FROM phi_deid.dim_patient p"
+  },
+  {
+   "name": "current database",
+   "sql": "SELECT current_database() AS a"
+  },
+  {
+   "name": "select into",
+   "sql": "SELECT state INTO x FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "key through UNPIVOT",
+   "sql": "SELECT v FROM phi_deid.dim_patient UNPIVOT(v FOR k IN (patient_key))"
+  },
+  {
+   "name": "key through PIVOT",
+   "sql": "SELECT state, m FROM phi_deid.dim_patient PIVOT(MAX(patient_key) AS m FOR state IN ('NY'))"
+  },
+  {
+   "name": "WITH before parens, raw",
+   "sql": "WITH x AS (SELECT ssn AS k FROM phi_gold.gold_dim_patient) (SELECT k FROM x)"
+  },
+  {
+   "name": "parenthesised raw",
+   "sql": "(SELECT ssn FROM phi_gold.gold_dim_patient)"
+  },
+  {
+   "name": "double parens key",
+   "sql": "((SELECT patient_key FROM phi_deid.dim_patient))"
+  },
+  {
+   "name": "SELECT AS VALUE",
+   "sql": "SELECT AS VALUE p FROM phi_deid.dim_patient p"
+  },
+  {
+   "name": "SELECT AS STRUCT star",
+   "sql": "SELECT AS STRUCT p.* FROM phi_deid.dim_patient p"
+  },
+  {
+   "name": "FORMAT row",
+   "sql": "SELECT FORMAT('%T', p) AS x FROM phi_deid.dim_patient p"
+  },
+  {
+   "name": "view name as row",
+   "sql": "SELECT dim_patient FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "ORDER BY key",
+   "sql": "SELECT state FROM phi_deid.dim_patient ORDER BY patient_key"
+  },
+  {
+   "name": "WHERE key oracle",
+   "sql": "SELECT state FROM phi_deid.dim_patient WHERE patient_key > '8'"
+  },
+  {
+   "name": "key in ARRAY subquery",
+   "sql": "SELECT ARRAY(SELECT patient_key FROM phi_deid.dim_patient) AS a"
+  },
+  {
+   "name": "key in UNNEST",
+   "sql": "SELECT x FROM UNNEST(ARRAY(SELECT patient_key FROM phi_deid.dim_patient)) x"
+  },
+  {
+   "name": "string as table",
+   "sql": "SELECT * FROM 'data.parquet'"
+  },
+  {
+   "name": "path as table",
+   "sql": "SELECT a FROM `/etc/passwd`"
+  },
+  {
+   "name": "query_table",
+   "sql": "SELECT a FROM query_table('phi_gold.gold_dim_patient')"
+  },
+  {
+   "name": "table decorator",
+   "sql": "SELECT state FROM phi_deid.dim_patient$20240101"
+  },
+  {
+   "name": "comma join raw",
+   "sql": "SELECT state FROM phi_deid.dim_patient, phi_gold.gold_dim_patient"
+  },
+  {
+   "name": "pipe syntax raw",
+   "sql": "FROM phi_gold.gold_dim_patient |> SELECT ssn"
+  },
+  {
+   "name": "pipe syntax key",
+   "sql": "FROM phi_deid.dim_patient |> SELECT patient_key"
+  },
+  {
+   "name": "JOIN ON subquery key",
+   "sql": "SELECT COUNT(*) AS n FROM phi_deid.dim_patient a JOIN phi_deid.dim_patient b ON a.patient_key = (SELECT MAX(patient_key) FROM phi_deid.dim_patient)"
+  },
+  {
+   "name": "SAFE prefix key",
+   "sql": "SELECT SAFE.SUBSTR(patient_key, 1) AS x FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "AEAD decrypt",
+   "sql": "SELECT AEAD.DECRYPT_STRING(k, c, a) AS x FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "UDF in raw dataset",
+   "sql": "SELECT phi_gold.udf(state) AS x FROM phi_deid.dim_patient"
+  },
+  {
+   "name": "declare",
+   "sql": "DECLARE x INT64"
+  },
+  {
+   "name": "set",
+   "sql": "SET @@query_label = 'a'"
+  }
+ ],
+ "legitimate": [
+  {
+   "name": "readmission by payer",
+   "sql": "SELECT payer_name, AVG(IF(readmitted_30d, 1, 0)) AS r FROM phi_deid.fct_encounter WHERE admit_year = 2025 GROUP BY payer_name ORDER BY r DESC LIMIT 20"
+  },
+  {
+   "name": "count distinct patients",
+   "sql": "SELECT dx_category, COUNT(DISTINCT patient_key) AS n FROM phi_deid.fct_encounter GROUP BY dx_category LIMIT 20"
+  },
+  {
+   "name": "count star",
+   "sql": "SELECT COUNT(*) AS n FROM phi_deid.fct_claim LIMIT 1"
+  },
+  {
+   "name": "conditional distinct count",
+   "sql": "SELECT COUNT(DISTINCT CASE WHEN readmitted_30d THEN patient_key END) AS n FROM phi_deid.fct_encounter LIMIT 1"
+  },
+  {
+   "name": "join on key",
+   "sql": "SELECT p.gender, COUNT(*) AS n FROM phi_deid.fct_encounter e JOIN phi_deid.dim_patient p ON e.patient_key = p.patient_key GROUP BY p.gender LIMIT 10"
+  },
+  {
+   "name": "join on two keys",
+   "sql": "SELECT c.claim_status, COUNT(*) AS n FROM phi_deid.fct_claim c JOIN phi_deid.fct_encounter e ON c.encounter_key = e.encounter_key AND c.mrn_key = e.mrn_key GROUP BY c.claim_status LIMIT 10"
+  },
+  {
+   "name": "CTE aggregate",
+   "sql": "WITH r AS (SELECT payer_name, COUNT(*) AS n FROM phi_deid.fct_encounter GROUP BY payer_name) SELECT payer_name, n FROM r ORDER BY n DESC LIMIT 5"
+  },
+  {
+   "name": "window rank",
+   "sql": "SELECT payer_name, RANK() OVER (ORDER BY SUM(paid_amount) DESC) AS rnk FROM phi_deid.fct_claim GROUP BY payer_name LIMIT 10"
+  },
+  {
+   "name": "safe divide",
+   "sql": "SELECT payer_name, SAFE_DIVIDE(SUM(paid_amount), SUM(billed_amount)) AS ratio FROM phi_deid.fct_claim GROUP BY payer_name LIMIT 10"
+  },
+  {
+   "name": "countif",
+   "sql": "SELECT payer_name, COUNTIF(claim_status = 'DENIED') AS denied FROM phi_deid.fct_claim GROUP BY payer_name LIMIT 10"
+  },
+  {
+   "name": "union",
+   "sql": "SELECT 'claim' AS k, COUNT(*) AS n FROM phi_deid.fct_claim UNION ALL SELECT 'encounter', COUNT(*) FROM phi_deid.fct_encounter LIMIT 2"
+  },
+  {
+   "name": "state and zip3",
+   "sql": "SELECT state, zip3, COUNT(*) AS n FROM phi_deid.dim_patient WHERE is_current GROUP BY state, zip3 LIMIT 50"
+  },
+  {
+   "name": "quoted view",
+   "sql": "SELECT state FROM `phi_deid.dim_patient` LIMIT 5"
+  },
+  {
+   "name": "cast and round",
+   "sql": "SELECT ROUND(AVG(CAST(length_of_stay_days AS FLOAT64)), 2) AS los FROM phi_deid.fct_encounter LIMIT 1"
+  },
+  {
+   "name": "subquery in FROM",
+   "sql": "SELECT AVG(n) AS a FROM (SELECT payer_name, COUNT(*) AS n FROM phi_deid.fct_claim GROUP BY payer_name) t LIMIT 1"
+  }
+ ]
+}

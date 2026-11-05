@@ -1,0 +1,9 @@
+{
+  "attacks": 103,
+  "attacks_blocked": 103,
+  "attacks_escaped": [],
+  "legitimate": 15,
+  "legitimate_allowed": 15,
+  "legitimate_wrongly_blocked": [],
+  "measured_at": "2026-11-04T17:13:35+00:00"
+}

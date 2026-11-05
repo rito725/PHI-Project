@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8501:8501"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DUCKDB_PATH: /data/phi_demo.duckdb
+    volumes:
+      - phi-data:/data
+      - ./reports:/app/reports
+
+volumes:
+  phi-data:
